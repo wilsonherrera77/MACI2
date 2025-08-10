@@ -19,10 +19,10 @@
     @media (min-width: 768px){ .chart-container{ height:420px } }
     .badge{ display:inline-block; padding:.25rem .5rem; border-radius:.5rem; background:#F3F4F6; font-weight:600; font-size:.85rem }
 
-    /* Overlay PDF pantalla completa */
+    /* Overlay de pantalla completa para visualizar PDF */
     .fs-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; z-index:9999; }
     .fs-overlay.active{ display:flex; }
-    .fs-frame-wrap{ width:min(1200px,95vw); height:min(95vh,calc(95vw*0.75)); background:#111; border-radius:.5rem; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,.4); }
+    .fs-wrap{ width:min(1200px,95vw); height:min(95vh,calc(95vw*0.75)); background:#111; border-radius:.5rem; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,.4); }
     .fs-frame{ width:100%; height:100%; border:0; }
     .fs-close{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:.5rem; padding:.35rem .6rem; }
     .fs-close:hover{ background:rgba(255,255,255,.2); }
@@ -41,7 +41,7 @@
       </p>
     </header>
 
-    <!-- Imagen debajo de los títulos: abre PDF en overlay -->
+    <!-- Imagen debajo de títulos: al tocar abre el PDF embebido (no descarga) -->
     <section class="mb-8">
       <figure class="card p-0 overflow-hidden">
         <img
@@ -49,9 +49,11 @@
           class="w-full h-auto cursor-zoom"
           src="https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT.png"
           alt="SMT-ONIC – Plataforma Soberana de Datos"
-          title="Clic para abrir la presentación (PDF)"
+          title="Clic para visualizar la presentación (PDF)"
         />
-        <figcaption class="px-3 py-2 text-xs text-gray-500">Clic sobre la imagen para abrir el PDF. Pulsa <kbd>Esc</kbd> para volver.</figcaption>
+        <figcaption class="px-3 py-2 text-xs text-gray-500">
+          Clic para visualizar el PDF. Pulsa <kbd>Esc</kbd> para volver.
+        </figcaption>
       </figure>
     </section>
 
@@ -77,7 +79,7 @@
       </div>
     </section>
 
-    <!-- Actividades y Herramientas -->
+    <!-- Diseño operativo -->
     <section class="card mb-8">
       <h2 class="text-xl md:text-2xl font-bold text-[var(--ink)] mb-2">Diseño operativo</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
@@ -258,24 +260,27 @@
     </footer>
   </div>
 
-  <!-- Overlay PDF -->
+  <!-- Overlay para visualizar el PDF -->
   <div id="pdfOverlay" class="fs-overlay" role="dialog" aria-modal="true" aria-label="Presentación SMT-ONIC (PDF)">
     <button class="fs-close" type="button" aria-label="Cerrar (Esc)" onclick="closePDF()">✕</button>
-    <div class="fs-frame-wrap">
+    <div class="fs-wrap">
       <iframe id="pdfFrame" class="fs-frame" title="SMT-ONIC – Presentación" referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
     <div class="fs-hint">Pulsa Esc para cerrar</div>
   </div>
 
   <script>
-    // ---------- Imagen -> PDF en overlay ----------
+    // -------- Imagen -> visualizar PDF en overlay (NO descarga) --------
     const PDF_URL = "https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT%20-%20ONIC%20presentacion%202024_2.pdf";
+    // Usamos el visor de Google para evitar bloqueos de 'X-Frame-Options' en algunos hosts
+    const VIEWER_SRC = "https://docs.google.com/gview?embedded=1&url=" + encodeURIComponent(PDF_URL);
+
     const psbImg = document.getElementById('psbImg');
     const pdfOverlay = document.getElementById('pdfOverlay');
     const pdfFrame = document.getElementById('pdfFrame');
 
     function openPDF(){
-      pdfFrame.src = PDF_URL;
+      pdfFrame.src = VIEWER_SRC;
       pdfOverlay.classList.add('active');
       try { pdfOverlay.requestFullscreen && pdfOverlay.requestFullscreen(); } catch(e) {}
     }
@@ -289,7 +294,7 @@
     pdfOverlay.addEventListener('click', (e)=>{ if(e.target === pdfOverlay) closePDF(); });
     document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePDF(); });
 
-    // ---------- Gráficas ----------
+    // --------- Gráficas (sin cambios) ---------
     const qs = (sel, el=document) => el.querySelector(sel);
     const qsa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
     const fmt = (val, currency, trm) => new Intl.NumberFormat('es-CO', { style:'currency', currency: currency==='USD'?'USD':'COP', maximumFractionDigits:0 }).format(currency==='USD'?val:val*trm);
