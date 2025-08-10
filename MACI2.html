@@ -19,13 +19,15 @@
     @media (min-width: 768px){ .chart-container{ height:420px } }
     .badge{ display:inline-block; padding:.25rem .5rem; border-radius:.5rem; background:#F3F4F6; font-weight:600; font-size:.85rem }
 
-    /* Overlay de pantalla completa para visualizar PDF */
+    /* Overlay de pantalla completa para visualizar Slides */
     .fs-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; z-index:9999; }
     .fs-overlay.active{ display:flex; }
     .fs-wrap{ width:min(1200px,95vw); height:min(95vh,calc(95vw*0.75)); background:#111; border-radius:.5rem; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,.4); }
     .fs-frame{ width:100%; height:100%; border:0; }
     .fs-close{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:.5rem; padding:.35rem .6rem; }
     .fs-close:hover{ background:rgba(255,255,255,.2); }
+    .fs-open{ position:absolute; top:12px; left:12px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:.5rem; padding:.35rem .6rem; text-decoration:none; }
+    .fs-open:hover{ background:rgba(255,255,255,.2); }
     .fs-hint{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); color:#e5e7eb; font-size:.75rem; opacity:.85 }
     .cursor-zoom{ cursor:zoom-in; }
   </style>
@@ -41,7 +43,7 @@
       </p>
     </header>
 
-    <!-- Imagen debajo de títulos: al tocar abre el PDF embebido (no descarga) -->
+    <!-- Imagen debajo de títulos: al tocar abre la presentación (no descarga) -->
     <section class="mb-8">
       <figure class="card p-0 overflow-hidden">
         <img
@@ -49,10 +51,10 @@
           class="w-full h-auto cursor-zoom"
           src="https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT.png"
           alt="SMT-ONIC – Plataforma Soberana de Datos"
-          title="Clic para visualizar la presentación (PDF)"
+          title="Clic para visualizar la presentación (Google Slides)"
         />
         <figcaption class="px-3 py-2 text-xs text-gray-500">
-          Clic para visualizar el PDF. Pulsa <kbd>Esc</kbd> para volver.
+          Clic para visualizar la presentación. Pulsa <kbd>Esc</kbd> para volver.
         </figcaption>
       </figure>
     </section>
@@ -260,23 +262,27 @@
     </footer>
   </div>
 
-  <!-- Overlay para visualizar el PDF -->
-  <div id="pdfOverlay" class="fs-overlay" role="dialog" aria-modal="true" aria-label="Presentación SMT-ONIC (PDF)">
+  <!-- Overlay para visualizar Google Slides -->
+  <div id="pdfOverlay" class="fs-overlay" role="dialog" aria-modal="true" aria-label="Presentación SMT-ONIC (Slides)">
     <button class="fs-close" type="button" aria-label="Cerrar (Esc)" onclick="closePDF()">✕</button>
+    <!-- Botón de respaldo para abrir en pestaña nueva -->
+    <a id="openNewTab" class="fs-open" target="_blank" rel="noopener">Abrir en pestaña nueva</a>
     <div class="fs-wrap">
-      <iframe id="pdfFrame" class="fs-frame" title="SMT-ONIC – Presentación" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      <iframe id="pdfFrame" class="fs-frame" title="SMT-ONIC – Presentación" allow="fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
     </div>
     <div class="fs-hint">Pulsa Esc para cerrar</div>
   </div>
 
   <script>
-    // -------- Imagen -> visualizar PDF en overlay (NO descarga) --------
-    const PDF_URL = "https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT%20-%20ONIC%20presentacion%202024_2.pdf";
-    const VIEWER_SRC = "https://docs.google.com/gview?embedded=1&url=" + encodeURIComponent(PDF_URL);
+    // -------- Imagen -> visualizar Google Slides en overlay (NO descarga) --------
+    const VIEWER_SRC = "https://docs.google.com/presentation/d/1yxAjN_b0B9Hrt3a1_7tMNQjQlutN0RwV/embed?start=false&loop=false&delayms=3000#slide=id.p1";
+    const VIEWER_FALLBACK = "https://docs.google.com/presentation/d/1yxAjN_b0B9Hrt3a1_7tMNQjQlutN0RwV/edit#slide=id.p1";
 
     const psbImg = document.getElementById('psbImg');
     const pdfOverlay = document.getElementById('pdfOverlay');
     const pdfFrame = document.getElementById('pdfFrame');
+    const openNewTabBtn = document.getElementById('openNewTab');
+    openNewTabBtn.href = VIEWER_FALLBACK;
 
     function openPDF(){
       pdfFrame.src = VIEWER_SRC;
