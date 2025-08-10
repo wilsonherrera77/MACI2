@@ -18,16 +18,42 @@
     .chart-container{ position:relative; width:100%; height:360px }
     @media (min-width: 768px){ .chart-container{ height:420px } }
     .badge{ display:inline-block; padding:.25rem .5rem; border-radius:.5rem; background:#F3F4F6; font-weight:600; font-size:.85rem }
+
+    /* Overlay PDF pantalla completa */
+    .fs-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.92); display:none; align-items:center; justify-content:center; z-index:9999; }
+    .fs-overlay.active{ display:flex; }
+    .fs-frame-wrap{ width:min(1200px,95vw); height:min(95vh,calc(95vw*0.75)); background:#111; border-radius:.5rem; overflow:hidden; box-shadow:0 10px 25px rgba(0,0,0,.4); }
+    .fs-frame{ width:100%; height:100%; border:0; }
+    .fs-close{ position:absolute; top:12px; right:12px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); color:#fff; border-radius:.5rem; padding:.35rem .6rem; }
+    .fs-close:hover{ background:rgba(255,255,255,.2); }
+    .fs-hint{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); color:#e5e7eb; font-size:.75rem; opacity:.85 }
+    .cursor-zoom{ cursor:zoom-in; }
   </style>
 </head>
 <body class="text-gray-800">
   <div class="max-w-6xl mx-auto p-4 md:p-8">
     <!-- Header -->
-    <header class="mb-8 md:mb-12 text-center">
+    <header class="mb-6 md:mb-8 text-center">
       <p class="uppercase tracking-widest text-xs text-gray-500">Programa MACI – Infografía por Componente</p>
       <h1 class="text-3xl md:text-5xl font-black text-[var(--ink)]">Componente 2: Plataforma Soberana de Datos (PSB)</h1>
-      <p class="mt-2 text-base md:text-lg text-gray-600 max-w-3xl mx-auto">Diseño y operación de una <span class="font-semibold">plataforma soberana</span> para captura, almacenamiento, catalogación e intercambio controlado de datos, con capacidades offline/edge e interoperabilidad.</p>
+      <p class="mt-2 text-base md:text-lg text-gray-600 max-w-3xl mx-auto">
+        Diseño y operación de una <span class="font-semibold">plataforma soberana</span> para captura, almacenamiento, catalogación e intercambio controlado de datos, con capacidades offline/edge e interoperabilidad.
+      </p>
     </header>
+
+    <!-- Imagen debajo de los títulos: abre PDF en overlay -->
+    <section class="mb-8">
+      <figure class="card p-0 overflow-hidden">
+        <img
+          id="psbImg"
+          class="w-full h-auto cursor-zoom"
+          src="https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT.png"
+          alt="SMT-ONIC – Plataforma Soberana de Datos"
+          title="Clic para abrir la presentación (PDF)"
+        />
+        <figcaption class="px-3 py-2 text-xs text-gray-500">Clic sobre la imagen para abrir el PDF. Pulsa <kbd>Esc</kbd> para volver.</figcaption>
+      </figure>
+    </section>
 
     <!-- Objetivo, Alcance, Indicadores -->
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
@@ -82,7 +108,7 @@
 
     <!-- Presupuesto año 1 y controles -->
     <section class="card mb-8">
-      <h2 class="text-xl md:text-2xl font-bold text-[var(--ink)] mb-2">Presupuesto (Año 1) y Fases</h2>
+      <h2 class="text-xl md:text-2xl font-bold text-[var(--ink)] mb-2">Presupuesto (Año 1) y Fases</h2>
       <p class="text-sm text-gray-600 mb-3">Total de referencia <strong>USD 531.000</strong>. Este monto ya refleja el desglose reportado para el componente (sin overhead adicional del programa). Ajusta TRM, moneda, desglose % interno y factores anuales.</p>
 
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -95,7 +121,7 @@
           <label class="block text-xs text-gray-500">TRM (COP/USD)</label>
           <input id="trm" type="number" step="0.01" value="4200" class="mt-1 w-full border rounded-md px-3 py-1.5" />
 
-          <label class="block text-xs text-gray-500 mt-3">Presupuesto Año 1</label>
+          <label class="block text-xs text-gray-500 mt-3">Presupuesto Año 1</label>
           <input id="y1budget" type="number" step="50" value="531000" class="mt-1 w-full border rounded-md px-3 py-1.5" />
           <p class="text-xs text-gray-500 mt-2">Total actual: <span id="y1total" class="font-semibold">—</span></p>
         </div>
@@ -105,22 +131,22 @@
             <div class="bg-gray-50 rounded-lg p-3">
               <div class="text-xs font-semibold">Equipo técnico</div>
               <input data-pct key="equipo" type="number" value="30.51" class="mt-1 w-full border rounded px-2 py-1" />
-              <div class="text-[11px] text-gray-500">% del Año 1 (USD 162.000)</div>
+              <div class="text-[11px] text-gray-500">% del Año 1 (USD 162.000)</div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3">
               <div class="text-xs font-semibold">Infraestructura & servicios</div>
               <input data-pct key="infra" type="number" value="9.23" class="mt-1 w-full border rounded px-2 py-1" />
-              <div class="text-[11px] text-gray-500">% del Año 1 (USD 49.000)</div>
+              <div class="text-[11px] text-gray-500">% del Año 1 (USD 49.000)</div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3">
               <div class="text-xs font-semibold">Seguridad & pentesting</div>
               <input data-pct key="seguridad" type="number" value="3.77" class="mt-1 w-full border rounded px-2 py-1" />
-              <div class="text-[11px] text-gray-500">% del Año 1 (USD 20.000)</div>
+              <div class="text-[11px] text-gray-500">% del Año 1 (USD 20.000)</div>
             </div>
             <div class="bg-gray-50 rounded-lg p-3">
               <div class="text-xs font-semibold">Capacitación & documentación</div>
               <input data-pct key="capacitacion" type="number" value="56.49" class="mt-1 w-full border rounded px-2 py-1" />
-              <div class="text-[11px] text-gray-500">% del Año 1 (USD 300.000)</div>
+              <div class="text-[11px] text-gray-500">% del Año 1 (USD 300.000)</div>
             </div>
           </div>
 
@@ -130,7 +156,7 @@
           </div>
 
           <div class="flex items-center gap-3 mt-3">
-            <label class="text-sm inline-flex items-center gap-2">Factores anuales (x Año 1):</label>
+            <label class="text-sm inline-flex items-center gap-2">Factores anuales (x Año 1):</label>
             <input id="factors" type="text" value="1,0|1,2|1,0|0,9|0,8" class="flex-1 border rounded px-2 py-1 text-sm" />
             <button id="apply" class="bg-[var(--ink)] text-white rounded px-3 py-2 text-sm">Aplicar</button>
             <button id="dl1" class="underline text-[var(--blue)] text-sm">Descargar donut</button>
@@ -232,7 +258,38 @@
     </footer>
   </div>
 
+  <!-- Overlay PDF -->
+  <div id="pdfOverlay" class="fs-overlay" role="dialog" aria-modal="true" aria-label="Presentación SMT-ONIC (PDF)">
+    <button class="fs-close" type="button" aria-label="Cerrar (Esc)" onclick="closePDF()">✕</button>
+    <div class="fs-frame-wrap">
+      <iframe id="pdfFrame" class="fs-frame" title="SMT-ONIC – Presentación" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    </div>
+    <div class="fs-hint">Pulsa Esc para cerrar</div>
+  </div>
+
   <script>
+    // ---------- Imagen -> PDF en overlay ----------
+    const PDF_URL = "https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT%20-%20ONIC%20presentacion%202024_2.pdf";
+    const psbImg = document.getElementById('psbImg');
+    const pdfOverlay = document.getElementById('pdfOverlay');
+    const pdfFrame = document.getElementById('pdfFrame');
+
+    function openPDF(){
+      pdfFrame.src = PDF_URL;
+      pdfOverlay.classList.add('active');
+      try { pdfOverlay.requestFullscreen && pdfOverlay.requestFullscreen(); } catch(e) {}
+    }
+    function closePDF(){
+      pdfOverlay.classList.remove('active');
+      pdfFrame.src = "";
+      if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+    }
+
+    psbImg.addEventListener('click', openPDF);
+    pdfOverlay.addEventListener('click', (e)=>{ if(e.target === pdfOverlay) closePDF(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePDF(); });
+
+    // ---------- Gráficas ----------
     const qs = (sel, el=document) => el.querySelector(sel);
     const qsa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
     const fmt = (val, currency, trm) => new Intl.NumberFormat('es-CO', { style:'currency', currency: currency==='USD'?'USD':'COP', maximumFractionDigits:0 }).format(currency==='USD'?val:val*trm);
