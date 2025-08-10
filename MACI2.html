@@ -272,7 +272,6 @@
   <script>
     // -------- Imagen -> visualizar PDF en overlay (NO descarga) --------
     const PDF_URL = "https://raw.githubusercontent.com/wilsonherrera77/MACI/main/SMT%20-%20ONIC%20presentacion%202024_2.pdf";
-    // Usamos el visor de Google para evitar bloqueos de 'X-Frame-Options' en algunos hosts
     const VIEWER_SRC = "https://docs.google.com/gview?embedded=1&url=" + encodeURIComponent(PDF_URL);
 
     const psbImg = document.getElementById('psbImg');
@@ -294,19 +293,17 @@
     pdfOverlay.addEventListener('click', (e)=>{ if(e.target === pdfOverlay) closePDF(); });
     document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closePDF(); });
 
-    // --------- Gráficas (sin cambios) ---------
+    // --------- Gráficas ---------
     const qs = (sel, el=document) => el.querySelector(sel);
     const qsa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
     const fmt = (val, currency, trm) => new Intl.NumberFormat('es-CO', { style:'currency', currency: currency==='USD'?'USD':'COP', maximumFractionDigits:0 }).format(currency==='USD'?val:val*trm);
 
-    // Estado
     let currency = 'USD';
     let trm = 4200;
     let year1 = 531000; // Año 1 referencia (PSB)
-    let pct = { equipo:30.51, infra:9.23, seguridad:3.77, capacitacion:56.49 }; // % dentro del Año 1
+    let pct = { equipo:30.51, infra:9.23, seguridad:3.77, capacitacion:56.49 };
     let factors = [1.0, 1.2, 1.0, 0.9, 0.8];
 
-    // DOM init
     const donutCtx = document.getElementById('donut').getContext('2d');
     const lineCtx  = document.getElementById('line').getContext('2d');
     let donut, line;
@@ -323,10 +320,8 @@
     function compute5y(){ return factors.map(f=> year1 * f); }
 
     function render(){
-      // Texto Total Año 1
       qs('#y1total').textContent = fmt(year1, currency, trm);
 
-      // Donut
       const bd = getBreakdown();
       const dataVals = bd.valuesUSD.map(v => currency==='USD'?v:v*trm);
       const donutData = { labels: bd.labels, datasets:[{ data: dataVals, backgroundColor: bd.palette, borderColor:'#f8f9fa', borderWidth:2 }] };
@@ -334,7 +329,6 @@
       if (donut) donut.destroy();
       donut = new Chart(donutCtx, { type:'doughnut', data:donutData, options:sharedOpts });
 
-      // Línea 5 años
       const y = compute5y().map(v => currency==='USD'?v:v*trm);
       const lineData = { labels:['Año 1','Año 2','Año 3','Año 4','Año 5'], datasets:[{ label:'Presupuesto anual', data:y, fill:false, borderWidth:3, tension:.25 }] };
       const lineOpts = { ...sharedOpts, plugins:{...sharedOpts.plugins, legend:{display:false}}, scales:{ x:{ grid:{display:false}, ticks:{color:'#374151'} }, y:{ grid:{color:'#E5E7EB'}, ticks:{ color:'#374151', callback:(v)=> currency==='USD'?('$'+(v/1e6).toFixed(1)+' M') : ((v/1e9).toFixed(1)+' mil M') } } } };
